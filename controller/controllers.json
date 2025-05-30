@@ -336,19 +336,19 @@
                     "hidden" : false
                 },
                 {
-                    "option_name" : "Ks",
-                    "option_friendly_name" : "Temperature Slope Gain value (Ks)", 
-                    "option_description" : "Gain value which determines the strength of the reaction to a slope steeper than the defined threshold. Increase this value if your grill cools too quickly after a temperature spike.  [Default=0.0075]",
+                    "option_name" : "slope_corr_duty",
+                    "option_friendly_name" : "Temperature Slope Correction Duty Cycle", 
+                    "option_description" : "Duty cycle to be executed in response to a slope steeper than the defined threshold. Increase this value if your grill cools too quickly after a temperature spike.  [Default=0.2]",
                     "option_type" : "float",
-                    "option_default" : 0.0075,
+                    "option_default" : 0.2,
                     "option_min" : null,
                     "option_max" : null, 
-                    "option_step" : 0.000001,
+                    "option_step" : 0.01,
                     "hidden" : false
                 },
                 {
                     "option_name" : "slope_thresh",
-                    "option_friendly_name" : "Temperature Slope Gain Activation Threshold", 
+                    "option_friendly_name" : "Temperature Slope Correction Activation Threshold", 
                     "option_description" : "Temperature decline steeper than this value (deg/sec) will activate the Temperature Slope correction.  Decrease this value if the controller is unable to react quick enough after temperature spikes. Units = deg/sec. Enter as positive value.  [Default=0.2]",
                     "option_type" : "float",
                     "option_default" : 0.2,
