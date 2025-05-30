@@ -57,7 +57,7 @@ class Controller(ControllerBase):
 	def __init__(self, config, units, cycle_data):
 		super().__init__(config, units, cycle_data)
 
-		self._calculate_gains(config['PB'], config['Ti'], config['Td'], config['Ks'])
+		self._calculate_gains(config['PB'], config['Ti'], config['Td'])
 
 		self.p = 0.0
 		self.i = 0.0
@@ -70,11 +70,14 @@ class Controller(ControllerBase):
 		self.error_last = 0.0
 		self.temp_last = 0.0
 		self.set_point = 0
+		self.timer = 0
 
 		self.derv = 0.0
 		self.inter = 0.0
 		# self.fire_strength = 0.0
 		self.slope_thresh = config['slope_thresh']
+		self.slope_delay = config['slope_delay']
+		self.slope_corr_duty = config['slope_corr_duty']
 		# self.decay_rate = config['decay_rate']
 		# self.target_strength = config['target_fire_strength']
 		# self.stength_thresh = config['fire_strength_thresh']
@@ -82,7 +85,7 @@ class Controller(ControllerBase):
 
 		self.set_target(0.0)
 
-	def _calculate_gains(self, pb, ti, td, ks):
+	def _calculate_gains(self, pb, ti, td):
 		if pb == 0:
 			self.kp = 0
 		else:
@@ -93,7 +96,7 @@ class Controller(ControllerBase):
 			self.ki = self.kp / ti
 		self.kd = self.kp * td
 		# self.ks = ks
-		self.slope_corr_duty = ks
+		
 		# self.kf = kf
 		eventLogger.debug('kp: ' + str(self.kp) + ', ki: ' + str(self.ki) + ', kd: ' + str(self.kd) + ', ks:' + str(self.slope_corr_duty))
 
@@ -122,10 +125,12 @@ class Controller(ControllerBase):
 		# Slope compensation (if temperature is falling while still above setpoint)
 		self.slope_comp = 0
 		self.mod_u = self.u
-		if temp_slope < -self.slope_thresh and current > self.set_point:
+		self.timer += dt
+		if temp_slope < -self.slope_thresh and current > self.set_point and self.timer >= self.slope_delay:
 			# self.slope_comp = self.ks * (-temp_slope)
 			# self.slope_comp = self.ks * (error)
-			self.slope_comp = 1
+			self.timer = 0
+			self.slope_comp = self.slope_corr_duty
 			self.mod_u = self.slope_corr_duty
 
 		# # Combine control terms

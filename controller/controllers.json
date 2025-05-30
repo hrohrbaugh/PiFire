@@ -356,6 +356,17 @@
                     "option_max" : null, 
                     "option_step" : 0.01,
                     "hidden" : false
+                },
+                {
+                    "option_name" : "slope_delay",
+                    "option_friendly_name" : "Minimum Time Delay between Slope Corrections (seconds)",
+                    "option_description" : "Minimum time delay between slope corrections.  This is to prevent the controller from overreacting due to temperature lag.  [Default=15]", 
+                    "option_type" : "float",
+                    "option_default" : 10.0,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.1,
+                    "hidden" : false
                 }
             ]
         },
