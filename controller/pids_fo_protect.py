@@ -92,9 +92,10 @@ class Controller(ControllerBase):
 		else:
 			self.ki = self.kp / ti
 		self.kd = self.kp * td
-		self.ks = ks
+		# self.ks = ks
+		self.slope_corr_duty = ks
 		# self.kf = kf
-		eventLogger.debug('kp: ' + str(self.kp) + ', ki: ' + str(self.ki) + ', kd: ' + str(self.kd) + ', ks:' + str(self.ks))
+		eventLogger.debug('kp: ' + str(self.kp) + ', ki: ' + str(self.ki) + ', kd: ' + str(self.kd) + ', ks:' + str(self.slope_corr_duty))
 
 	def update(self, current):
 		# dt
@@ -120,12 +121,15 @@ class Controller(ControllerBase):
 
 		# Slope compensation (if temperature is falling while still above setpoint)
 		self.slope_comp = 0
+		self.mod_u = self.u
 		if temp_slope < -self.slope_thresh and current > self.set_point:
 			# self.slope_comp = self.ks * (-temp_slope)
-			self.slope_comp = self.ks * (error)
+			# self.slope_comp = self.ks * (error)
+			self.slope_comp = 1
+			self.mod_u = self.slope_corr_duty
 
-		# Combine control terms
-		self.mod_u = self.u + self.slope_comp
+		# # Combine control terms
+		# self.mod_u = self.u + self.slope_comp
 
 		# Clamp between 1.0 and 0.0
 		self.mod_u = max(0.0, min(self.mod_u, 1.0))
