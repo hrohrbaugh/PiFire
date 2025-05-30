@@ -48,6 +48,7 @@ from common import create_logger
 from controller.base import ControllerBase 
 log_level = logging.DEBUG
 eventLogger = create_logger('events', filename='/tmp/events.log', messageformat='%(asctime)s [%(levelname)s] %(message)s', level=log_level)
+# eventLogger = create_logger('events', filename='events.log', messageformat='%(asctime)s [%(levelname)s] %(message)s', level=log_level)
 
 '''
 Class Definition
@@ -56,7 +57,7 @@ class Controller(ControllerBase):
 	def __init__(self, config, units, cycle_data):
 		super().__init__(config, units, cycle_data)
 
-		self._calculate_gains(config['PB'], config['Ti'], config['Td'], config['Ks'], config['Kf'])
+		self._calculate_gains(config['PB'], config['Ti'], config['Td'], config['Ks'])
 
 		self.p = 0.0
 		self.i = 0.0
@@ -72,11 +73,16 @@ class Controller(ControllerBase):
 
 		self.derv = 0.0
 		self.inter = 0.0
-		self.fire_strength = 0.0
+		# self.fire_strength = 0.0
+		self.slope_thresh = config['slope_thresh']
+		# self.decay_rate = config['decay_rate']
+		# self.target_strength = config['target_fire_strength']
+		# self.stength_thresh = config['fire_strength_thresh']
+		# self.fire_correction = 0
 
 		self.set_target(0.0)
 
-	def _calculate_gains(self, pb, ti, td, ks, kf):
+	def _calculate_gains(self, pb, ti, td, ks):
 		if pb == 0:
 			self.kp = 0
 		else:
@@ -87,8 +93,8 @@ class Controller(ControllerBase):
 			self.ki = self.kp / ti
 		self.kd = self.kp * td
 		self.ks = ks
-		self.kf = kf
-		eventLogger.debug('kp: ' + str(self.kp) + ', ki: ' + str(self.ki) + ', kd: ' + str(self.kd) + ', ks:' + str(self.ks) + ', kf:' + str(self.kf))
+		# self.kf = kf
+		eventLogger.debug('kp: ' + str(self.kp) + ', ki: ' + str(self.ki) + ', kd: ' + str(self.kd) + ', ks:' + str(self.ks))
 
 	def update(self, current):
 		# dt
@@ -109,8 +115,33 @@ class Controller(ControllerBase):
 		# PID
 		self.u = self.p + self.i + self.d
 		
-        # Temperature slope
-        #temp_slope = (temperature[t] - temperature[t - 1]) / dt
+		# Temperature Slope
+		temp_slope = (current - self.temp_last) / dt
+
+		# Slope compensation (if temperature is falling while still above setpoint)
+		self.slope_comp = 0
+		if temp_slope < -self.slope_thresh and current > self.set_point:
+			# self.slope_comp = self.ks * (-temp_slope)
+			self.slope_comp = self.ks * (error)
+
+		# Combine control terms
+		self.mod_u = self.u + self.slope_comp
+
+		# Clamp between 1.0 and 0.0
+		self.mod_u = max(0.0, min(self.mod_u, 1.0))
+
+		# === FIRE STRENGTH MODEL ===
+		# self.fire_strength += (self.mod_u - self.decay_rate) * dt
+		# print(self.mod_u - self.decay_rate)
+		# self.fire_strength = max(0.0, self.fire_strength)  # Prevent negative
+		# self.fire_strength = min(self.fire_strength, 1.0) # Cap at 100% (normalize 0-1)
+		# self.fire_correction = 0
+		# if self.fire_strength <= self.stength_thresh:
+		# 	self.fire_correction = self.kf * (self.target_strength - self.fire_strength)
+		# 	self.fire_correction = max(0.0, self.fire_correction)  # Only boost
+		# 	self.fire_correction = min(self.fire_correction, 1.0) # Cap at 100% (normalize 0-1)
+
+
 
 		# Clamping anti-windup method. 
 		# Stops integration when the sum of the block components exceeds the output limits 
@@ -126,14 +157,14 @@ class Controller(ControllerBase):
 			clamping_log = "true"
 			eventLogger.debug('clamping integrator.')
 			self.inter -= error * dt		
-		eventLogger.debug('PID Update... error: ' + str(error) + ', p: ' + str(self.p) + ', i: ' + str(self.i) + ', d: ' + str(self.d) + ', pid: ' + str(self.u) + ' , clamping: ' + str(clamping_log))
+		eventLogger.debug('PID Update... error: ' + str(error) + ', p: ' + str(self.p) + ', i: ' + str(self.i) + ', d: ' + str(self.d) + ', s: ' + str(self.slope_comp) + ', pid: ' + str(self.mod_u) + ' , clamping: ' + str(clamping_log))
 
 		# Update for next cycle
 		self.temp_last = current
 		self.error_last = error
 		self.last_update = time.time()
 
-		return self.u
+		return self.mod_u
 
 	def set_target(self, set_point):
 		self.set_point = set_point
