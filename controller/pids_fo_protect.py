@@ -57,6 +57,8 @@ class Controller(ControllerBase):
 	def __init__(self, config, units, cycle_data):
 		super().__init__(config, units, cycle_data)
 
+		self.slope_corr_duty = config['slope_corr_duty']
+
 		self._calculate_gains(config['PB'], config['Ti'], config['Td'])
 
 		self.p = 0.0
@@ -77,7 +79,7 @@ class Controller(ControllerBase):
 		# self.fire_strength = 0.0
 		self.slope_thresh = config['slope_thresh']
 		self.slope_delay = config['slope_delay']
-		self.slope_corr_duty = config['slope_corr_duty']
+		
 		# self.decay_rate = config['decay_rate']
 		# self.target_strength = config['target_fire_strength']
 		# self.stength_thresh = config['fire_strength_thresh']
