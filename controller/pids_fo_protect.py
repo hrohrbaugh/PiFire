@@ -57,6 +57,8 @@ class Controller(ControllerBase):
 	def __init__(self, config, units, cycle_data):
 		super().__init__(config, units, cycle_data)
 
+		self.u_min = self.cycle_data['u_min']
+		self.u_max = self.cycle_data['u_max']
 		self.slope_corr_duty = config['slope_corr_duty']
 
 		self._calculate_gains(config['PB'], config['Ti'], config['Td'])
@@ -161,7 +163,7 @@ class Controller(ControllerBase):
 		# and the integrator output and block input have opposite sign or the sum no longer exceeds the output limits.
 		# 
 		# Implemented via reversing the addition to self.inter above if we are clamping.		
-		if not ((abs(self.u) >= 1) and (self.i * self.u > 0)):
+		if not (self.mod_u >= self.u_max) or (self.mod_u <= self.u_min):
 			clamping_log = "false"
 			eventLogger.debug('Not clamping integrator.')
 		else:
