@@ -689,6 +689,14 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 				# Check to see if it's time to update pid and update if needed.
 				if (now - pidLoopStart) > CycleTime:
 					pid_output = controllerCore.update(ptemp)
+					control_data = {
+						'Output': pid_output,
+						'P': controllerCore.p,
+						'I': controllerCore.i,
+						'D': controllerCore.d
+					}
+
+					in_data['controller_data'] = control_data
 					pidLoopStart = now
 					CycleRatio = RawCycleRatio = settings['cycle_data']['u_min'] if LidOpenDetect else pid_output
 					# If ratio is less than min set auger ratio to min and control further via fan.

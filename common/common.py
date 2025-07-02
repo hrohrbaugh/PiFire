@@ -1495,7 +1495,7 @@ def unpack_history(datalist):
 	temp_dict = {}  # Create temporary dictionary to store all of the history data lists
 	temp_struct = datalist[0]  # Load the initial history data into a temporary dictionary  
 	for key in temp_struct.keys():  # Iterate each of the keys
-		if key in ['P', 'F', 'NT', 'EXD', 'AUX']:
+		if key in ['P', 'F', 'NT', 'EXD', 'AUX', 'PID_P', 'PID_I', 'PID_D', 'PID_OUT']:
 			temp_dict[key] = {}
 			for subkey in temp_struct[key]:
 				temp_dict[key][subkey] = []
@@ -1505,7 +1505,7 @@ def unpack_history(datalist):
 	for index in range(len(datalist)):
 		temp_struct = datalist[index]
 		for key, value in temp_struct.items():
-			if key in ['P', 'F', 'NT', 'EXD', 'AUX']:
+			if key in ['P', 'F', 'NT', 'EXD', 'AUX', 'PID_P', 'PID_I', 'PID_D', 'PID_OUT']:
 				for subkey, subvalue in temp_struct[key].items():
 					temp_dict[key][subkey].append(subvalue)
 			else: 
@@ -1531,6 +1531,10 @@ def write_history(in_data, maxsizelines=28800, ext_data=False):
 	datastruct['PSP'] = in_data['primary_setpoint']  # Setpoint for the primary probe (non-notify setpoint) [value]
 	datastruct['NT'] = in_data['notify_targets']  # Notification Target Temps for all probes
 	datastruct['AUX'] = in_data['probe_history']['aux']  # Contains auxilliary probe temperature history [key:value]
+	datastruct['PID_P'] = in_data['controller_data']['P']
+	datastruct['PID_I'] = in_data['controller_data']['I']
+	datastruct['PID_D'] = in_data['controller_data']['D']
+	datastruct['PID_OUT'] = in_data['controller_data']['Output']
 
 	if ext_data:
 		datastruct['EXD'] = in_data['ext_data']
