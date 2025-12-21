@@ -32,7 +32,7 @@ if (typeof dashDataStruct == 'undefined') {
 	// Set max temperatures for units specified 
 	if (units == 'F') {
 		var maxTempPrimary = 600; 
-		var maxTempFood = 300;
+		var maxTempFood = 2000;
 		var minTemp = 0;
 	} else {
 		var maxTempPrimary = 300; 
