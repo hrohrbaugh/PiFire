@@ -49,7 +49,7 @@ var temperatureCharts = new Chart(document.getElementById('HistoryChart'), {
 			},
 			zoom: {
 				limits: {
-					y: {min: -30, max: 600}
+					y: {min: -30, max: 2000}
 				  },
 				pan: {
 					enabled: true,
