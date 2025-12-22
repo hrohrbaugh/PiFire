@@ -35,8 +35,8 @@ if (typeof dashDataStruct == 'undefined') {
 		var maxTempFood = 2000;
 		var minTemp = 0;
 	} else {
-		var maxTempPrimary = 300; 
-		var maxTempFood = 150;
+		var maxTempPrimary = 600; 
+		var maxTempFood = 2000;
 		var minTemp = -20;
 	};
 } else {
