@@ -434,6 +434,36 @@
                 }   
             },
             "config" : []
+        },
+		"step_response" : {
+            "friendly_name" : "Constant Duty Cycle",
+            "module_name" : "step_response",
+            "image" : "pid.png",
+            "description" : "This controller allows for the user to set a constant duty cycle and observe the system response.",
+            "author" : "Heath Rohrbaugh",
+            "link" : "https://github.com/markalston/PiFire", 
+            "contributors" : ["Ben Parmeter", "James Weber", "Heath Rohrbaugh"],
+            "attributions" : [],
+            "recommendations" : {
+                "cycle" : { 
+                    "cycle_time" : 15,
+                    "cycle_ratio_min" : 0.05,
+                    "cycle_ratio_max" : 0.9
+                }
+            },
+            "config" : [
+                {
+                    "option_name" : "Cycle_Ratio",
+                    "option_friendly_name" : "Desired Auger Duty Cycle", 
+                    "option_description" : "This option sets the fixed auger duty cycle.  Enter value between 0 and 1 in increments of 0.05. Be careful when changing this setting.  If set too high, thermal runaway will occur. [Default=0.3]",
+                    "option_type" : "float",
+                    "option_default" : 0.3,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.05,
+                    "hidden" : false
+                }
+            ]
         }
     }
 }
