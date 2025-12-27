@@ -29,9 +29,14 @@
         "stable_window": 12,
         "tau": 115,
         "theta": 65
+      },
+      "vel_pid": {
+        "Kp": 0.0015,
+        "Td": 0.0,
+        "Ti": 0.00000375
       }
     },
-    "selected": "pid_clamping"
+    "selected": "vel_pid"
   },
   "cycle_data": {
     "HoldCycleTime": 15,
