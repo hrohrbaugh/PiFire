@@ -429,15 +429,18 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 		# Load total cycle time from settings
 		CycleTime = settings['cycle_data']['HoldCycleTime']  # Total Cycle Time
 
-		# NOTE: We are intentionally NOT forcing CycleRatio to u_min here anymore if the vel_pid is selected
+		# Velocity-PID: do a bumpless start by seeding from the last applied output
+		seed_ratio = settings['cycle_data']['u_min']
 		if settings['controller']['selected'] == 'vel_pid':
-			if 'CycleRatio' not in locals():
-				CycleRatio = settings['cycle_data']['u_min']
-				eventLogger.debug(f'CycleRatio seeding failed!!')
-			if 'RawCycleRatio' not in locals():
-				RawCycleRatio = CycleRatio
+			try:
+				# Prefer already-loaded control dict; fall back to a fresh read if needed
+				seed_ratio = float(control.get('last_cycle_ratio', seed_ratio))
+			except Exception:
+				controlLogger.exception("Failed reading last_cycle_ratio; using u_min")
 		else:
-			CycleRatio = RawCycleRatio = settings['cycle_data']['u_min']
+			seed_ratio = settings['cycle_data']['u_min']
+
+		CycleRatio = RawCycleRatio = seed_ratio
 
 		# Derive OnTime/OffTime from the preserved ratio
 		OnTime = CycleTime * CycleRatio
@@ -1087,6 +1090,18 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 			write_control(control, direct_write=True, origin='control')
 			send_notifications("Grill_Error_01")
 			break
+
+		# --- Persist last applied CycleRatio for bumpless transitions ---
+		try:
+			# Only write if CycleRatio exists in this mode
+			if 'CycleRatio' in locals():
+				control = read_control()
+				control['last_cycle_ratio'] = float(CycleRatio)
+				control['last_cycle_mode'] = mode
+				write_control(control, direct_write=True, origin='control')
+		except Exception:
+			controlLogger.exception("Failed to persist last_cycle_ratio")
+
 
 		# End of Loop Recipe Check
 		if control['mode'] == 'Recipe':
