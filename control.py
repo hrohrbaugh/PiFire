@@ -433,6 +433,7 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 		if settings['controller']['selected'] == 'vel_pid':
 			if 'CycleRatio' not in locals():
 				CycleRatio = settings['cycle_data']['u_min']
+				eventLogger.debug(f'CycleRatio seeding failed!!')
 			if 'RawCycleRatio' not in locals():
 				RawCycleRatio = CycleRatio
 		else:
@@ -740,7 +741,7 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 						except Exception:
 							controlLogger.exception('Controller initialize() failed; continuing without bumpless init.')
 						controller_needs_init = False
-						
+
 					pid_output = controllerCore.update(ptemp)
 					controllerCycleStart = now
 					CycleRatio = RawCycleRatio = settings['cycle_data']['u_min'] if LidOpenDetect else pid_output

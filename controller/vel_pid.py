@@ -90,7 +90,7 @@ class Controller(ControllerBase):
 		self.derv = 0.0
 		self.inter = 0.0
 
-		# self.set_target(0.0)
+		self.set_target(0.0)
 
 	def _calculate_gains(self, kc, ti, td):
 		if kc == 0:
@@ -100,8 +100,8 @@ class Controller(ControllerBase):
 		if ti == 0:
 			self.ki = 0
 		else:
-			self.ki = self.kp / ti
-		self.kd = self.kp * td
+			self.ki = ti
+		self.kd = td
 
 
 	def update(self, current):
