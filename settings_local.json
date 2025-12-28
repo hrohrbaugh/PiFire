@@ -43,6 +43,11 @@
       },
       "step_response": {
         "Cycle_Ratio": 0.4
+      },
+      "vel_pid": {
+        "KP": 0.0015,
+        "Td": 0.0,
+        "Ti": 3.75e-06
       }
     },
     "selected": "step_response"
@@ -191,7 +196,7 @@
         "spi_device": 0
       }
     },
-    "selected": "prototype"
+    "selected": "none"
   },
   "globals": {
     "augerrate": 0.5,
@@ -272,7 +277,7 @@
     "time": 1766380754
   },
   "modules": {
-    "display": "prototype",
+    "display": "none",
     "dist": "none",
     "grillplat": "prototype"
   },
@@ -414,99 +419,110 @@
     "system_type": "prototype",
     "triggerlevel": "HIGH"
   },
-  "probe_map": {
-    "probe_devices": [
-      {
-        "config": {},
-        "device": "Prototype",
-        "module": "prototype",
-        "module_filename": "prototype",
-        "ports": [
-          "P0",
-          "P1",
-          "P2",
-          "P3",
-          "P4"
-        ]
+  "probe_settings": {
+    "probe_map": {
+      "probe_devices": [
+        {
+          "config": {},
+          "device": "Prototype",
+          "module": "prototype",
+          "module_filename": "prototype",
+          "ports": [
+            "P0",
+            "P1",
+            "P2",
+            "P3",
+            "P4"
+          ]
+        }
+      ],
+      "probe_info": [
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "Ambient",
+          "name": "Ambient",
+          "port": "P0",
+          "profile": {
+            "A": 0.00024723753,
+            "B": 0.00023402251,
+            "C": 1.3879768e-07,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Aux"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "Meat1",
+          "name": "Meat 1",
+          "port": "P1",
+          "profile": {
+            "A": 0.00024723753,
+            "B": 0.00023402251,
+            "C": 1.3879768e-07,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Food"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "Grill",
+          "name": "Grill",
+          "port": "P2",
+          "profile": {
+            "A": 0.00073431401,
+            "B": 0.0002157437,
+            "C": 9.515686e-08,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Primary"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "Meat2",
+          "name": "Meat 2",
+          "port": "P3",
+          "profile": {
+            "A": 0.00024723753,
+            "B": 0.00023402251,
+            "C": 1.3879768e-07,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Food"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "BurnpotTemp",
+          "name": "Burnpot Temp",
+          "port": "P4",
+          "profile": {
+            "A": 0.08349559509913372,
+            "B": -0.015417214989461945,
+            "C": 8.10020549005308e-05,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Food"
+        }
+      ]
+    },
+    "probe_profiles": {
+      "PT-1000-OEM": {
+        "A": 0.04136906456,
+        "B": -0.00677987613,
+        "C": 2.760294589e-05,
+        "id": "PT-1000-OEM",
+        "name": "PT-1000-Grill-Probe-OEM"
       }
-    ],
-    "probe_info": [
-      {
-        "device": "Prototype",
-        "enabled": true,
-        "label": "Ambient",
-        "name": "Ambient",
-        "port": "P0",
-        "profile": {
-          "A": 0.00024723753,
-          "B": 0.00023402251,
-          "C": 1.3879768e-07,
-          "id": "PT-1000-OEM",
-          "name": "PT-1000-Grill-Probe-OEM"
-        },
-        "type": "Aux"
-      },
-      {
-        "device": "Prototype",
-        "enabled": true,
-        "label": "Meat1",
-        "name": "Meat 1",
-        "port": "P1",
-        "profile": {
-          "A": 0.00024723753,
-          "B": 0.00023402251,
-          "C": 1.3879768e-07,
-          "id": "PT-1000-OEM",
-          "name": "PT-1000-Grill-Probe-OEM"
-        },
-        "type": "Food"
-      },
-      {
-        "device": "Prototype",
-        "enabled": true,
-        "label": "Grill",
-        "name": "Grill",
-        "port": "P2",
-        "profile": {
-          "A": 0.00073431401,
-          "B": 0.0002157437,
-          "C": 9.515686e-08,
-          "id": "PT-1000-OEM",
-          "name": "PT-1000-Grill-Probe-OEM"
-        },
-        "type": "Primary"
-      },
-      {
-        "device": "Prototype",
-        "enabled": true,
-        "label": "Meat2",
-        "name": "Meat 2",
-        "port": "P3",
-        "profile": {
-          "A": 0.00024723753,
-          "B": 0.00023402251,
-          "C": 1.3879768e-07,
-          "id": "PT-1000-OEM",
-          "name": "PT-1000-Grill-Probe-OEM"
-        },
-        "type": "Food"
-      },
-      {
-        "device": "Prototype",
-        "enabled": true,
-        "label": "BurnpotTemp",
-        "name": "Burnpot Temp",
-        "port": "P4",
-        "profile": {
-          "A": 0.08349559509913372,
-          "B": -0.015417214989461945,
-          "C": 8.10020549005308e-05,
-          "id": "PT-1000-OEM",
-          "name": "PT-1000-Grill-Probe-OEM"
-        },
-        "type": "Food"
-      }
-    ]
+    }
   },
   "pwm": {
     "frequency": 25000,

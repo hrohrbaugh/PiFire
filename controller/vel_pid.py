@@ -55,8 +55,10 @@ Imported Libraries
 '''
 import time
 import logging
-
-from controller.base import ControllerBase 
+from common import create_logger
+from controller.base import ControllerBase
+log_level = logging.DEBUG
+eventLogger = create_logger('events', filename='./logs/events.log', messageformat='%(asctime)s [%(levelname)s] %(message)s', level=log_level)
 
 '''
 Class Definition
@@ -64,9 +66,12 @@ Class Definition
 class Controller(ControllerBase):
 	def __init__(self, config, units, cycle_data):
 		super().__init__(config, units, cycle_data)
+		self.function_list.append('initialize')
+		self.function_list.append('set_gains')
+		self.function_list.append('get_k')
 
 		# pb, ti, td
-		self._calculate_gains(config[0], config[1], config[2])
+		self._calculate_gains(config.get('KP'), config.get('Ti'), config.get('Td'))
 
 		self.p = 0.0
 		self.i = 0.0
@@ -130,9 +135,12 @@ class Controller(ControllerBase):
 		# Implemented via reversing the addition to self.inter above if we are clamping.		
 		if not ((abs(self.u) >= 1) and (self.i * self.u > 0)):
 			clamping_log = "false"
+			eventLogger.debug('Not clamping integrator.')
 		else:
 			clamping_log = "true"
-			self.inter -= error * dt		
+			eventLogger.debug('Clamping Integrator.')
+			self.inter -= error * dt	
+		eventLogger.debug(f'PID Update... error: {str(error)}, p: {str(self.p)}, i: {str(self.i)}, d: {str(self.d)}, pid: {self.u}, clamp: {str(clamping_log)}' )	
 
 		# Update for next cycle
 		self.error_last = error
@@ -144,6 +152,7 @@ class Controller(ControllerBase):
 		self.u_1 = u_init
 		self.pv_1 = pv_init
 		self.pv_2 = pv_init
+		eventLogger.debug(f'Velocity PID Initialized @ u_init = {u_init} & pv_init = {pv_init}')
 
 	def set_target(self, set_point):
 		self.set_point = set_point
@@ -155,17 +164,13 @@ class Controller(ControllerBase):
 	def set_gains(self, pb, ti, td):
 		self._calculate_gains(pb,ti,td)
 
+	def set_config(self,config):
+		super().set_config(config)
+		self._calculate_gains(config.get('KC'), config.get('Ti'), config.get('Td'))
+		self.error = 0.0
+		self.inter = 0.0
+		self.derv = 0.0
+
 
 	def get_k(self):
 		return self.kp, self.ki, self.kd
-	
-	def supported_functions(self):
-		function_list = [
-			'update', 
-	        'set_target', 
-	        'get_config', 
-			'set_gains', 
-			'get_k',
-			'initialize'
-        ]
-		return function_list
