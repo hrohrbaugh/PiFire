@@ -435,6 +435,7 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 			try:
 				# Prefer already-loaded control dict; fall back to a fresh read if needed
 				seed_ratio = float(control.get('last_cycle_ratio', seed_ratio))
+				last_mode = control.get('last_cycle_mode')
 			except Exception:
 				controlLogger.exception("Failed reading last_cycle_ratio; using u_min")
 		else:
@@ -739,7 +740,7 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 					# --- Velocity-pid: One-time initialization for vel-pid style controller ---
 					if controller_needs_init and hasattr(controllerCore, 'initialize'):
 						try:
-							controllerCore.initialize(u_init=controller_seed_u, pv_init=ptemp)
+							controllerCore.initialize(u_init=controller_seed_u, pv_init=ptemp, last_mode=last_mode)
 							eventLogger.debug(f'Controller initialized (bumpless): u_init={controller_seed_u}, pv_init={ptemp}')
 						except Exception:
 							controlLogger.exception('Controller initialize() failed; continuing without bumpless init.')

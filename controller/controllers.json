@@ -514,6 +514,17 @@
                     "option_max" : null, 
                     "option_step" : 0.000000001,
                     "hidden" : false
+                },
+                {
+                    "option_name" : "u_init",
+                    "option_friendly_name" : "Forced initial gain value.", 
+                    "option_description" : "This option allows the user to force a specific inital duty cycle value for the first loop of the velocity PID.  The performance of the velocity PID is heavily dependent on this starting value, so this setting offers increased flexibility.  If u_init is set to 0, then the effective duty cycle from the last loop of the controller will be used. [Default=0.0]",
+                    "option_type" : "float",
+                    "option_default" : 0.0,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.0001,
+                    "hidden" : false
                 }
             ]
         }

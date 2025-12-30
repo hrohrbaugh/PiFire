@@ -73,6 +73,8 @@ class Controller(ControllerBase):
 		# pb, ti, td
 		self._calculate_gains(config.get('KP'), config.get('Ti'), config.get('Td'))
 
+		self.u_init = config.get('u_init')
+
 		self.p = 0.0
 		self.i = 0.0
 		self.d = 0.0
@@ -148,11 +150,14 @@ class Controller(ControllerBase):
 
 		return self.u
 	
-	def initialize(self, u_init, pv_init):
-		self.u_1 = u_init
+	def initialize(self, u_init, pv_init, last_mode):
+		if self.u_init == 0 or last_mode != 'Startup':
+			self.u_1 = u_init
+		else:
+			self.u_1 = self.u_init
 		self.pv_1 = pv_init
 		self.pv_2 = pv_init
-		eventLogger.debug(f'Velocity PID Initialized @ u_init = {u_init} & pv_init = {pv_init}')
+		eventLogger.debug(f'Velocity PID Initialized @ u_init = {self.u_1} & pv_init = {pv_init}, last mode = {last_mode}')
 
 	def set_target(self, set_point):
 		self.set_point = set_point
