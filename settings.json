@@ -17,9 +17,20 @@
         "stable_window": 12.0
       },
       "pid_clamping": {
-        "PB": 100.0,
+        "PB": 120.0,
+        "Td": 50.0,
+        "Ti": 250.0
+      },
+      "pid_clamping_percent_pb": {
+        "PB": 42.0,
         "Td": 45.0,
         "Ti": 180.0
+      },
+      "pid_parallel": {
+        "Clamping": true,
+        "Kd": 0.45,
+        "Ki": 5.5e-05,
+        "Kp": 0.01
       },
       "pid_sp": {
         "PB": 60.0,
@@ -30,24 +41,28 @@
         "tau": 115,
         "theta": 65
       },
+      "step_response": {
+        "Cycle_Ratio": 0.4
+      },
       "vel_pid": {
-        "Kp": 0.0015,
+        "KP": 0.0015,
         "Td": 0.0,
-        "Ti": 0.00000375
+        "Ti": 3.75e-06,
+        "u_init": 0.35
       }
     },
     "selected": "vel_pid"
   },
   "cycle_data": {
-    "HoldCycleTime": 15,
+    "HoldCycleTime": 20,
     "LidOpenDetectEnabled": false,
     "LidOpenPauseTime": 60,
     "LidOpenThreshold": 15,
     "PMode": 0,
-    "SmokeOffCycleTime": 10,
-    "SmokeOnCycleTime": 3,
-    "u_max": 0.4,
-    "u_min": 0.12
+    "SmokeOffCycleTime": 400,
+    "SmokeOnCycleTime": 330,
+    "u_max": 0.9,
+    "u_min": 0.1
   },
   "dashboard": {
     "current": "Default",
@@ -60,14 +75,15 @@
         "friendly_name": "Basic Dashboard",
         "html_name": "dash_basic.html",
         "metadata": "basic.json",
-        "name": "Basic"
+        "name": "Basic",
+        "screenshot": "screenshot.png"
       },
       "Default": {
         "config": {
-          "max_food_temp_C": 150,
-          "max_food_temp_F": 300,
-          "max_primary_temp_C": 300,
-          "max_primary_temp_F": 600,
+          "max_food_temp_C": "150",
+          "max_food_temp_F": "1500",
+          "max_primary_temp_C": "300",
+          "max_primary_temp_F": "600",
           "touch_screen_mode": "Off"
         },
         "custom": {
@@ -76,7 +92,8 @@
         "friendly_name": "Default Dashboard",
         "html_name": "dash_default.html",
         "metadata": "default.json",
-        "name": "Default"
+        "name": "Default",
+        "screenshot": "screenshot.png"
       }
     }
   },
@@ -91,16 +108,20 @@
         "rotation": 0
       },
       "ili9341": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9341b": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9341e": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9341em": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9341f": {
         "display_data_filename": "./display/ili9341f_320x240.json",
@@ -108,19 +129,24 @@
           "button",
           "touch"
         ],
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9488": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9488b": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9488e": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "ili9488em": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "none": {},
       "protoflex": {
@@ -143,28 +169,35 @@
       "ssd1306": {},
       "ssd1306b": {},
       "st7789_240x320": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "st7789_240x320b": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "st7789_240x320e": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "st7789e": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "st7789p": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "st7789v_240x320": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       },
       "st7789v_240x320e": {
-        "rotation": 0
+        "rotation": 0,
+        "spi_device": 0
       }
     },
-    "selected": "ili9341e"
+    "selected": "none"
   },
   "globals": {
     "augerrate": 0.5,
@@ -177,10 +210,10 @@
     "grill_name": "Camp Chef",
     "page_theme": "dark",
     "prime_ignition": false,
-    "python_exec": ".venv/bin/python",
+    "python_exec": "bin/python",
     "units": "F",
     "updated_message": false,
-    "uv": true,
+    "uv": false,
     "venv": true
   },
   "history_page": {
@@ -189,15 +222,15 @@
     "datapoints": 60,
     "minutes": 219,
     "probe_config": {
-      "Ambient": {
-        "bg_color": "rgb(0, 64, 255)",
-        "bg_color_target": "rgb(0, 128, 255)",
+      "BurnpotTemp": {
+        "bg_color": "rgb(126, 0, 126, 1)",
+        "bg_color_target": "rgb(126, 64, 125, 1)",
         "dash_setpoint": true,
         "enabled": true,
         "fill": false,
-        "line_color": "rgb(0, 64, 255)",
-        "line_color_target": "rgb(0, 128, 255)",
-        "name": "Ambient",
+        "line_color": "rgb(126, 0, 126, 1)",
+        "line_color_target": "rgb(126, 64, 125, 1)",
+        "name": "Burnpot Temp",
         "type": "Food"
       },
       "Grill": {
@@ -213,15 +246,26 @@
         "name": "Grill",
         "type": "Primary"
       },
-      "TestProbe": {
-        "bg_color": "rgb(0, 200, 64)",
-        "bg_color_target": "rgb(0, 232, 126)",
+      "Meat1": {
+        "bg_color": "rgb(0, 64, 255, 1)",
+        "bg_color_target": "rgb(0, 128, 255, 1)",
         "dash_setpoint": true,
         "enabled": true,
         "fill": false,
-        "line_color": "rgb(0, 200, 64)",
-        "line_color_target": "rgb(0, 232, 126)",
-        "name": "Test Probe",
+        "line_color": "rgb(0, 64, 255, 1)",
+        "line_color_target": "rgb(0, 128, 255, 1)",
+        "name": "Meat 1",
+        "type": "Food"
+      },
+      "Meat2": {
+        "bg_color": "rgb(132, 0, 0, 1)",
+        "bg_color_target": "rgb(200, 0, 0, 1)",
+        "dash_setpoint": true,
+        "enabled": true,
+        "fill": false,
+        "line_color": "rgb(132, 0, 0, 1)",
+        "line_color_target": "rgb(200, 0, 0, 1)",
+        "name": "Meat 2",
         "type": "Food"
       }
     }
@@ -231,12 +275,12 @@
     "temp": 165
   },
   "lastupdated": {
-    "time": 1751479072
+    "time": 1767036017
   },
   "modules": {
-    "display": "ili9341e",
+    "display": "none",
     "dist": "none",
-    "grillplat": "raspberry_pi_all"
+    "grillplat": "prototype"
   },
   "notify_services": {
     "apprise": {
@@ -280,6 +324,49 @@
       "PublicURL": "",
       "UserKeys": "",
       "enabled": false
+    },
+    "wled": {
+      "device_address": "wled.local",
+      "enabled": false,
+      "event_presets": {
+        "Grill_Error": 1,
+        "Pellet_Level_Low": 1,
+        "Recipe_Next": 1,
+        "Temp_Achieved": 1,
+        "Timer_Expired": 1
+      },
+      "mode_presets": {
+        "Hold": 1,
+        "Prime": 1,
+        "Reignite": 1,
+        "Shutdown": 1,
+        "Smoke": 1,
+        "Startup": 1,
+        "Stop": 1
+      },
+      "notify_duration": 120,
+      "profile_numbers": {
+        "booting": 201,
+        "cooking": 203,
+        "cooldown": 204,
+        "error_fault": 210,
+        "idle": 200,
+        "low_pellets": 208,
+        "night_mode": 211,
+        "overshoot_alarm": 206,
+        "preheat": 202,
+        "probe_alarm": 207,
+        "target_reached": 205,
+        "timer_done": 209
+      },
+      "suggested_config": {
+        "cooking_color": "blue",
+        "idle_brightness": 20,
+        "led_count": 6,
+        "night_mode": false
+      },
+      "use_profiles": true,
+      "use_suggested_presets": false
     }
   },
   "pelletlevel": {
@@ -292,7 +379,7 @@
   "platform": {
     "buttonslevel": "HIGH",
     "current": "pcb_4.x.x",
-    "dc_fan": false,
+    "dc_fan": true,
     "devices": {
       "display": {
         "dc": 24,
@@ -321,95 +408,110 @@
       "power": 22,
       "pwm": 13
     },
-    "real_hw": true,
-    "standalone": true,
+    "real_hw": false,
+    "standalone": false,
     "system": {
       "1WIRE": 4,
       "SPI0": {
-        "CE0": 7,
-        "CE1": 8
+        "CE0": 8,
+        "CE1": 7
       }
     },
-    "system_type": "raspberry_pi_all",
+    "system_type": "prototype",
     "triggerlevel": "HIGH"
   },
   "probe_settings": {
     "probe_map": {
       "probe_devices": [
         {
-          "config": {
-            "ADC0_rd": "10000",
-            "ADC1_rd": "10000",
-            "ADC2_rd": "10000",
-            "ADC3_rd": "10000",
-            "i2c_bus_addr": "0x48",
-            "voltage_ref": "3.28"
-          },
-          "device": "ADS1115",
-          "module": "ads1115_adafruit",
+          "config": {},
+          "device": "Prototype",
+          "module": "prototype",
+          "module_filename": "prototype",
           "ports": [
-            "ADC0",
-            "ADC1",
-            "ADC2",
-            "ADC3"
-          ]
-        },
-        {
-          "config": {
-            "transient": "True"
-          },
-          "device": "DS18B201WireDigitalThermometer",
-          "module": "ds18b20",
-          "ports": [
-            "DS0"
+            "P0",
+            "P1",
+            "P2",
+            "P3",
+            "P4"
           ]
         }
       ],
       "probe_info": [
         {
-          "device": "ADS1115",
+          "device": "Prototype",
           "enabled": true,
           "label": "Ambient",
           "name": "Ambient",
-          "port": "ADC0",
-          "profile": {
-            "A": 0.05966017913127897,
-            "B": -0.01048654943772497,
-            "C": 4.987389532180097e-05,
-            "id": "99b8f02d-233d-11ee-a7a2-e5396c02c5fd",
-            "name": "PT-1000-Ideal"
-          },
-          "type": "Food"
-        },
-        {
-          "device": "DS18B201WireDigitalThermometer",
-          "enabled": true,
-          "label": "TestProbe",
-          "name": "Test Probe",
-          "port": "DS0",
+          "port": "P0",
           "profile": {
             "A": 0.00024723753,
             "B": 0.00023402251,
             "C": 1.3879768e-07,
-            "id": "ET73-HM",
-            "name": "ET-73-Heatermeter"
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Aux"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "Meat1",
+          "name": "Meat 1",
+          "port": "P1",
+          "profile": {
+            "A": 0.00024723753,
+            "B": 0.00023402251,
+            "C": 1.3879768e-07,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
           },
           "type": "Food"
         },
         {
-          "device": "ADS1115",
+          "device": "Prototype",
           "enabled": true,
           "label": "Grill",
           "name": "Grill",
-          "port": "ADC1",
+          "port": "P2",
           "profile": {
             "A": 0.00073431401,
             "B": 0.0002157437,
             "C": 9.515686e-08,
-            "id": "TWPS00",
-            "name": "Thermoworks-Pro-Series-HeaterMeter"
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
           },
           "type": "Primary"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "Meat2",
+          "name": "Meat 2",
+          "port": "P3",
+          "profile": {
+            "A": 0.00024723753,
+            "B": 0.00023402251,
+            "C": 1.3879768e-07,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Food"
+        },
+        {
+          "device": "Prototype",
+          "enabled": true,
+          "label": "BurnpotTemp",
+          "name": "Burnpot Temp",
+          "port": "P4",
+          "profile": {
+            "A": 0.08349559509913372,
+            "B": -0.015417214989461945,
+            "C": 8.10020549005308e-05,
+            "id": "PT-1000-OEM",
+            "name": "PT-1000-Grill-Probe-OEM"
+          },
+          "type": "Food"
         }
       ]
     },
@@ -474,26 +576,26 @@
   },
   "pwm": {
     "frequency": 25000,
-    "max_duty_cycle": 100,
-    "min_duty_cycle": 20,
+    "max_duty_cycle": 80,
+    "min_duty_cycle": 79,
     "profiles": [
       {
-        "duty_cycle": 20
+        "duty_cycle": 100
       },
       {
-        "duty_cycle": 35
+        "duty_cycle": 100
       },
       {
-        "duty_cycle": 50
+        "duty_cycle": 100
       },
       {
-        "duty_cycle": 75
+        "duty_cycle": 100
       },
       {
         "duty_cycle": 100
       }
     ],
-    "pwm_control": false,
+    "pwm_control": true,
     "temp_range_list": [
       3,
       7,
@@ -521,6 +623,9 @@
     "reigniteretries": 1,
     "startup_check": true
   },
+  "server_info": {
+    "uuid": "3c836b54-c968-11f0-a5dc-2ccf67b1102b"
+  },
   "shutdown": {
     "auto_power_off": false,
     "shutdown_duration": 600
@@ -537,6 +642,7 @@
   "startup": {
     "duration": 720,
     "prime_on_startup": 0,
+    "pwm_duty_cycle": 100,
     "smartstart": {
       "enabled": false,
       "exit_temp": 120,
@@ -570,14 +676,15 @@
     },
     "start_to_mode": {
       "after_startup_mode": "Hold",
-      "primary_setpoint": 220
+      "primary_setpoint": 225,
+      "start_to_hold_prompt": true
     },
     "startup_exit_temp": 120
   },
   "versions": {
-    "build": 44,
+    "build": 63,
     "cookfile": "1.5.0",
     "recipe": "1.0.0",
-    "server": "1.9.1"
+    "server": "1.10.3"
   }
 }
