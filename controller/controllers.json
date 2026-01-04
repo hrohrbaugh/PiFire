@@ -434,6 +434,99 @@
                 }   
             },
             "config" : []
+        },
+		"step_response" : {
+            "friendly_name" : "Constant Duty Cycle",
+            "module_name" : "step_response",
+            "image" : "pid.png",
+            "description" : "This controller allows for the user to set a constant duty cycle and observe the system response.",
+            "author" : "Heath Rohrbaugh",
+            "link" : "https://github.com/markalston/PiFire", 
+            "contributors" : ["Ben Parmeter", "James Weber", "Heath Rohrbaugh"],
+            "attributions" : [],
+            "recommendations" : {
+                "cycle" : { 
+                    "cycle_time" : 15,
+                    "cycle_ratio_min" : 0.05,
+                    "cycle_ratio_max" : 0.9
+                }
+            },
+            "config" : [
+                {
+                    "option_name" : "Cycle_Ratio",
+                    "option_friendly_name" : "Desired Auger Duty Cycle", 
+                    "option_description" : "This option sets the fixed auger duty cycle.  Enter value between 0 and 1 in increments of 0.05. Be careful when changing this setting.  If set too high, thermal runaway will occur. [Default=0.3]",
+                    "option_type" : "float",
+                    "option_default" : 0.3,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.05,
+                    "hidden" : false
+                }
+            ]
+        },
+		"vel_pid" : {
+            "friendly_name" : "Velocity PID w/ Integrator Clamping",
+            "module_name" : "vel_pid",
+            "image" : "pid.png",
+            "description" : "The original PiFire PID modified to both calculate the derivative portion in the classic de/dt method instead of the dT/dt method and with integral anti-windup protection achieved with a clamping method.",
+            "author" : "Mark Alston",
+            "link" : "https://github.com/markalston/PiFire", 
+            "contributors" : ["Ben Parmeter", "James Weber", "Mark Alston"],
+            "attributions" : [],
+            "recommendations" : {
+                "cycle" : { 
+                    "cycle_time" : 20,
+                    "cycle_ratio_min" : 0.1,
+                    "cycle_ratio_max" : 0.90
+                }
+            },
+            "config" : [
+                {
+                    "option_name" : "KP",
+                    "option_friendly_name" : "Proportional Gain", 
+                    "option_description" : "The proportional band is the total range of the controlled output that can be produced within the controller’s 0% and 100% limits.   Within the PB the command output is between 1.0 and 0.  Outside the band the command output is 1 or -1 (fully on or off). Increase this if you are overshooting setpoint.[Default=30.0]",
+                    "option_type" : "float",
+                    "option_default" : 0.0015,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.00001,
+                    "hidden" : false
+                },
+                {
+                    "option_name" : "Td",
+                    "option_friendly_name" : "Derivative Time Constant (Td)", 
+                    "option_description" : "Time constant that determines how quickly the system reponds to changes in error rate. Higher Td makes the controller more responsive to the Error Rate of Change. Td basically acts as a damper on the system. Be cautious with this setting and start low and increase slowly. It might not even be needed and can easily drive a system into instability. [Default=20.0]",
+                    "option_type" : "float",
+                    "option_default" : 0.0,
+                    "option_min" : null,
+                    "option_max" : null,
+                    "option_step" : 0.00001,  
+                    "hidden" : false
+                },
+                {
+                    "option_name" : "Ti",
+                    "option_friendly_name" : "Integral Time Constant (Ti)", 
+                    "option_description" : "Time constant that determines how quickly we respond to accumulated error. Higher Ti makes the controller less responsive to accumulated error over time. Lower this if you cannot reach setpoint. [Default=120.0]",
+                    "option_type" : "float",
+                    "option_default" : 0.00000375,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.000000001,
+                    "hidden" : false
+                },
+                {
+                    "option_name" : "u_init",
+                    "option_friendly_name" : "Forced initial gain value.", 
+                    "option_description" : "This option allows the user to force a specific inital duty cycle value for the first loop of the velocity PID.  The performance of the velocity PID is heavily dependent on this starting value, so this setting offers increased flexibility.  If u_init is set to 0, then the effective duty cycle from the last loop of the controller will be used. [Default=0.0]",
+                    "option_type" : "float",
+                    "option_default" : 0.0,
+                    "option_min" : null,
+                    "option_max" : null, 
+                    "option_step" : 0.0001,
+                    "hidden" : false
+                }
+            ]
         }
     }
 }

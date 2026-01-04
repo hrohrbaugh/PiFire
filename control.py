@@ -426,11 +426,27 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 		write_metrics(metrics)
 
 	if mode == 'Hold':
-		# Initialize cycle to minimum ratio.
-		OnTime = settings['cycle_data']['HoldCycleTime'] * settings['cycle_data']['u_min']  # Auger On Time
-		OffTime = settings['cycle_data']['HoldCycleTime'] * (1 - settings['cycle_data']['u_min'])  # Auger Off Time
+		# Load total cycle time from settings
 		CycleTime = settings['cycle_data']['HoldCycleTime']  # Total Cycle Time
-		CycleRatio = RawCycleRatio = settings['cycle_data']['u_min']  # Ratio of OnTime to CycleTime
+
+		# Velocity-PID: do a bumpless start by seeding from the last applied output
+		seed_ratio = settings['cycle_data']['u_min']
+		if settings['controller']['selected'] == 'vel_pid':
+			try:
+				# Prefer already-loaded control dict; fall back to a fresh read if needed
+				seed_ratio = float(control.get('last_cycle_ratio', seed_ratio))
+				last_mode = control.get('last_cycle_mode')
+			except Exception:
+				controlLogger.exception("Failed reading last_cycle_ratio; using u_min")
+		else:
+			seed_ratio = settings['cycle_data']['u_min']
+
+		CycleRatio = RawCycleRatio = seed_ratio
+
+		# Derive OnTime/OffTime from the preserved ratio
+		OnTime = CycleTime * CycleRatio
+		OffTime = CycleTime * (1 - CycleRatio)
+
 		LidOpenDetect = False
 		LidOpenEventExpires = 0
 		'''
@@ -439,6 +455,11 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 		controllerCore, controller_status = _init_controller(settings, control)
 		if controller_status == 'Inactive':
 			status = 'Inactive'
+		
+		# --- Velocity-PID bumpless init helpers ---
+		# Seed from the currently applied output
+		controller_seed_u = CycleRatio
+		controller_needs_init = True
 		eventLogger.debug('On Time = ' + str(OnTime) + ', OffTime = ' + str(OffTime) + ', CycleTime = ' + str(
 			CycleTime) + ', CycleRatio = ' + str(CycleRatio))
 
@@ -606,11 +627,19 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 		if control['controller_update'] and mode == 'Hold':
 			control['controller_update'] = False
 			write_control(control, direct_write=True, origin='control')
+
+			# --- Velocity-PID: Capture current applied output BEFORE swapping controllers---
+			prev_cycle_ratio = CycleRatio
+
 			# Reinitialize the controller with the updated settings
 			settings = read_settings()
 			controllerCore, controller_status = _init_controller(settings, control)
 			if controller_status == 'Active':
 				eventLogger.info('Controller reinitialized with updated settings')
+
+				# ---Velocity-PID: seed the new controller with previous output
+				controller_seed_u = prev_cycle_ratio
+				controller_needs_init = True
 
 		# Check if user changed hopper levels and update if required
 		if control['distance_update']:
@@ -707,6 +736,16 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 			if mode == 'Hold':
 				# Check to see if it's time to update pid and update if needed.
 				if (now - controllerCycleStart) > CycleTime:
+
+					# --- Velocity-pid: One-time initialization for vel-pid style controller ---
+					if controller_needs_init and hasattr(controllerCore, 'initialize'):
+						try:
+							controllerCore.initialize(u_init=controller_seed_u, pv_init=ptemp, last_mode=last_mode)
+							eventLogger.debug(f'Controller initialized (bumpless): u_init={controller_seed_u}, pv_init={ptemp}')
+						except Exception:
+							controlLogger.exception('Controller initialize() failed; continuing without bumpless init.')
+						controller_needs_init = False
+
 					pid_output = controllerCore.update(ptemp)
 					controllerCycleStart = now
 					CycleRatio = RawCycleRatio = settings['cycle_data']['u_min'] if LidOpenDetect else pid_output
@@ -1052,6 +1091,18 @@ def _work_cycle(mode, grill_platform, probe_complex, display_device, dist_device
 			write_control(control, direct_write=True, origin='control')
 			send_notifications("Grill_Error_01")
 			break
+
+		# --- Persist last applied CycleRatio for bumpless transitions ---
+		try:
+			# Only write if CycleRatio exists in this mode
+			if 'CycleRatio' in locals():
+				control = read_control()
+				control['last_cycle_ratio'] = float(CycleRatio)
+				control['last_cycle_mode'] = mode
+				write_control(control, direct_write=True, origin='control')
+		except Exception:
+			controlLogger.exception("Failed to persist last_cycle_ratio")
+
 
 		# End of Loop Recipe Check
 		if control['mode'] == 'Recipe':
