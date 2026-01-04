@@ -7,9 +7,9 @@ This branch provides appropriate settings for running Pifire locally on a laptop
 ## Set up
 
 To prepare to run Pifire locally, 3 powershell instances are required.
-    1. Redis Server
-    2. Web app ------------> navigate to Pifire repo folder
-    3. Control process ----> navigate to Pifire repo folder
+1. Redis Server
+2. Web app ------------> navigate to Pifire repo folder
+3. Control process ----> navigate to Pifire repo folder
 
 ## Command List
 
